@@ -35,7 +35,7 @@ action("log10", [O1 | Stack]) ->
 action("tan", [O1 | Stack]) ->
   [math:tan(O1) | Stack];
 action("ctan", [O1 | Stack]) ->
-  [1/math:tan(O1) | Stack];
+  [1 / math:tan(O1) | Stack];
 action("cos", [O1 | Stack]) ->
   [math:cos(O1) | Stack];
 action("sin", [O1 | Stack]) ->
@@ -50,6 +50,9 @@ action("sqrt", [O1 | Stack]) ->
 % Jesli to na co natrafilismy nie jest operatorem zakladamy zejest liczba i wrzucam ja na stos
 action(Operand, Stack) ->
   case (catch list_to_float(Operand)) of
-    {'EXIT', _} -> [list_to_integer(Operand) | Stack];
+    {'EXIT', _} -> case catch (list_to_integer(Operand)) of
+                     {'EXIT', _} -> exit("Bledne dane.");
+                     Integer_value -> [Integer_value | Stack]
+                   end;
     Float_value -> [Float_value | Stack]
-  end.
+end .
